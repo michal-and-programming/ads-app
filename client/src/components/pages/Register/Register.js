@@ -28,6 +28,8 @@ const Register = () => {
       });
       if(res.ok){
         navigate('/')
+      }else{
+        console.log('Registration error');
       }
     } catch(err){
       console.log(err)
