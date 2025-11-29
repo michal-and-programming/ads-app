@@ -9,16 +9,15 @@ const path = require('path');
 
 const app = express();
 
-const server = app.listen(process.env.PORT || 8000, () => {
-  console.log('server work nice');
-});
+const PORT = process.env.PORT || 8000;
 
 connectToDB();
 
 app.use(cors({
-  origin: 'http://localhost:3000',
+  origin: true,
   credentials: true,
 }));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -29,15 +28,23 @@ app.use(session({
   }),
   resave: false,
   saveUninitialized: false,
+  cookie: {
+    httpOnly: true,
+    secure: false,
+    sameSite: 'lax'
+  }
 }));
 
 app.use('/api', require('./routes/ads.routes'));
 app.use('/api', require('./routes/users.routes'));
 app.use('/auth', require('./routes/auth.routes'));
 
-app.use(express.static(path.join(__dirname, '/client/build')));
-app.use(express.static(path.join(__dirname, '/public')));
+app.use(express.static(path.join(__dirname, 'client/build')));
 
-app.use((req, res) => {
-  res.status(404).send({ message: 'Not found...' });
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
+});
+
+app.listen(PORT, () => {
+  console.log('Server running on port', PORT);
 });
