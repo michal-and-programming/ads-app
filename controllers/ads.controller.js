@@ -4,7 +4,7 @@ const path = require('path');
 
 exports.loadAll = async (req, res) => {
   try {
-    const ads = await Ad.find().populate('author', 'login avatar phone');
+    const ads = await Ad.find().populate('author', 'location avatar');
     res.json(ads);
   }
   catch(err) {
@@ -14,7 +14,7 @@ exports.loadAll = async (req, res) => {
 
 exports.loadChosen = async (req, res) => {
    try {
-    const chosen = await Ad.findById(req.params.id).populate('author', 'login avatar phone');
+    const chosen = await Ad.findById(req.params.id).populate('author', 'login phone avatar');
     res.json(chosen);
   }
   catch(err) {
@@ -41,10 +41,10 @@ exports.searchAd = async (req, res) => {
 
 exports.addNewAd = async (req, res) => {
   try {
-    const { title, content, date, price, location, infoSeller } = req.body;
+    const { title, content, date, price, location, phone } = req.body;
     const file = req.file;
 
-    if (!title || !content || !date || !price || !location || !infoSeller || !file) {
+    if (!title || !content || !date || !price || !location || !phone || !file) {
       if (file) removeImage(file.path);
       return res.status(400).json({ message: 'Wrong input' });
     }
@@ -58,7 +58,7 @@ exports.addNewAd = async (req, res) => {
       img: imgName,
       price,
       location,
-      infoSeller,
+      phone,
       author: req.session.userId
     });
 
@@ -66,9 +66,8 @@ exports.addNewAd = async (req, res) => {
     res.json(newAd);
 
   } catch (err) {
-    if (req.file) removeImage(req.file.path);
-    res.status(500).json(err);
-  }
+  console.error( err);
+}
 };
 
 exports.deleteAd = async (req, res) => {
@@ -92,7 +91,7 @@ exports.editAd = async (req, res) => {
     chosen.date = req.body.date;
     chosen.price = req.body.price;
     chosen.location = req.body.location;
-    chosen.infoSeller = req.body.infoSeller;
+    chosen.phone = req.body.phone;
     if (req.file) {
       removeImage(path.join('public/uploads', chosen.img));
       chosen.img = req.file.filename;

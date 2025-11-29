@@ -56,6 +56,7 @@ exports.login = async (req, res) => {
         req.session.login = user.login;
         req.session.userId = user._id;
         res.status(200).send({message: 'Login successful'})
+        console.log('After login, session:', req.session);
       }
       else {
         res.status(400).send({message: 'Bad request'});
@@ -64,6 +65,17 @@ exports.login = async (req, res) => {
     }
   } catch {
     res.status(500).send(err);
+  }
+};
+
+exports.getUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.session.userId).select('login avatar phone');
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    res.json(user);
+  } catch (err) {
+    res.status(500).json(err);
   }
 };
 

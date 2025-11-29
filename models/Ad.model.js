@@ -7,7 +7,7 @@ const adShema = new mongoose.Schema({
   img: {type: String, required: true},
   price: {type: String, required: true},
   location: {type: String, required: true},
-  infoSeller: {type: String, required: true},
+  phone: {type: String, required: true},
   author: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',

@@ -15,7 +15,10 @@ const server = app.listen(process.env.PORT || 8000, () => {
 
 connectToDB();
 
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:3000',
+  credentials: true,
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -25,7 +28,7 @@ app.use(session({
     mongoUrl: process.env.Mondo_URL,
   }),
   resave: false,
-  saveUninitialized: false
+  saveUninitialized: false,
 }));
 
 app.use('/api', require('./routes/ads.routes'));
